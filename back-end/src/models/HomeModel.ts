@@ -2,7 +2,7 @@ import { prisma } from '../database/prisma';
 
 class HomeModel {
   index(): string {
-    return 'Home API';
+    return 'Login App API';
   }
 }
 

@@ -1,9 +1,13 @@
 import express from 'express';
 
 import HomeController from '../controllers/HomeController';
+import UserController from '../controllers/UserController';
 
 const router = express.Router();
 
 router.get('/', HomeController.index);
+
+// user
+router.post('/user', UserController.create);
 
 export { router };
