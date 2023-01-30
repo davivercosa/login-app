@@ -3,3 +3,8 @@ export interface ICreate {
   name: string;
   password: string;
 }
+
+export interface IAuthenticate {
+  email: string;
+  password: string;
+}
