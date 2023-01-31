@@ -11,5 +11,6 @@ router.get('/', HomeController.index);
 router.post('/user', UserController.create);
 router.post('/signin', UserController.authenticate);
 router.post('/forgot-password', UserController.forgotPassword);
+router.put('/password', UserController.resetPassword);
 
 export { router };

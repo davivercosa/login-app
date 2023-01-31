@@ -12,3 +12,8 @@ export interface IAuthenticate {
 export interface IForgotPassword {
   email: string;
 }
+
+export interface IResetPassword {
+  new_password: string;
+  token: string;
+}

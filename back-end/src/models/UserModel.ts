@@ -2,11 +2,13 @@ import { User } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
 import { prisma } from '../database/prisma';
+import { IToken } from '../interfaces/shared/interfaces';
 import { IApiResponse } from '../interfaces/shared/responses';
 import {
   IAuthenticate,
   ICreate,
   IForgotPassword,
+  IResetPassword,
 } from '../interfaces/user/user.interface';
 import Jwt from '../services/Jwt';
 import mail from '../services/mail';
@@ -143,13 +145,85 @@ class UserModel {
     }
   }
 
-  async find(userEmail: string): Promise<IApiResponse> {
+  async resetPassword(newPasswordInfo: IResetPassword): Promise<IApiResponse> {
     try {
-      const user = await prisma.user.findUnique({
+      const authenticateTokenResp = Jwt.authenticateToken(
+        newPasswordInfo.token,
+      );
+
+      if (authenticateTokenResp.status === 'error') {
+        return authenticateTokenResp;
+      }
+
+      const decodedToken = authenticateTokenResp.result as IToken;
+
+      const findResp = await this.find(decodedToken.id);
+
+      if (findResp.status === `error`) {
+        return findResp;
+      }
+
+      if (findResp.result === null) {
+        return {
+          status: 'error',
+          message: 'Invalid credentials',
+          code: 401,
+        };
+      }
+
+      const userDbInfo = findResp.result as User;
+
+      if (userDbInfo.changePassword !== 1) {
+        return {
+          status: 'error',
+          message:
+            'Unauthorized action. User must request the change of password, in order to change it',
+          code: 401,
+        };
+      }
+
+      const hashedPassword = await bcrypt.hash(
+        newPasswordInfo.new_password,
+        10,
+      );
+
+      await prisma.user.update({
         where: {
-          email: userEmail,
+          id: Number(decodedToken.id),
+        },
+        data: {
+          changePassword: 0,
+          password: hashedPassword,
         },
       });
+
+      return { status: 'success', message: 'Paswword changed successfully' };
+    } catch (error) {
+      const err = error as Error;
+
+      console.log(err);
+
+      return { status: 'error', message: err, code: 500 };
+    }
+  }
+
+  async find(userEmailOrId: string | number): Promise<IApiResponse> {
+    try {
+      let user: User | null;
+
+      if (typeof userEmailOrId === 'string') {
+        user = await prisma.user.findUnique({
+          where: {
+            email: userEmailOrId,
+          },
+        });
+      } else {
+        user = await prisma.user.findUnique({
+          where: {
+            id: userEmailOrId,
+          },
+        });
+      }
 
       return {
         status: `success`,
@@ -165,7 +239,7 @@ class UserModel {
     }
   }
 
-  greetUser(username: string): IApiResponse {
+  greet(username: string): IApiResponse {
     try {
       const [loginHour] = new Intl.DateTimeFormat('default', {
         hour: 'numeric',

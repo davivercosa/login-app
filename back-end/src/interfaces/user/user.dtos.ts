@@ -36,4 +36,15 @@ const forgotPasswordSchema = Joi.object({
     .required(),
 });
 
-export { createSchema, authenticateSchema, forgotPasswordSchema };
+const resetPassordSchema = Joi.object({
+  new_password: Joi.string().strip().required(),
+
+  token: Joi.string().strip().required(),
+});
+
+export {
+  createSchema,
+  authenticateSchema,
+  forgotPasswordSchema,
+  resetPassordSchema,
+};

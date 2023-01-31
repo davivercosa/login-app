@@ -1,7 +1,8 @@
 import { User } from '@prisma/client';
 import * as dotenv from 'dotenv';
-import jwt, { Secret } from 'jsonwebtoken';
+import jwt, { JsonWebTokenError, Secret } from 'jsonwebtoken';
 
+import { IToken } from '../interfaces/shared/interfaces';
 import { IApiResponse } from '../interfaces/shared/responses';
 import UserModel from '../models/UserModel';
 
@@ -20,13 +21,15 @@ class Jwt {
         { expiresIn: userInfo.changePassword === 1 ? '0.5h' : '1d' },
       );
 
-      const greetUserResp = UserModel.greetUser(userInfo.name);
+      // console.log(token, 'here token');
 
-      if (greetUserResp.status === 'error') {
-        return greetUserResp;
+      const greetResp = UserModel.greet(userInfo.name);
+
+      if (greetResp.status === 'error') {
+        return greetResp;
       }
 
-      const message = greetUserResp.result as string;
+      const message = greetResp.result as string;
 
       return {
         status: 'success',
@@ -37,6 +40,38 @@ class Jwt {
       const err = error as Error;
 
       console.log(err);
+
+      return { status: 'error', message: err, code: 500 };
+    }
+  }
+
+  authenticateToken(token: string): IApiResponse {
+    try {
+      jwt.verify(token, secret);
+
+      const decodedToken = jwt.decode(token) as IToken;
+
+      return {
+        status: 'success',
+        message: 'User successfully authenticated',
+        result: decodedToken,
+      };
+    } catch (error) {
+      const err = error as JsonWebTokenError;
+
+      console.log(err);
+
+      if (err.name === 'JsonWebTokenError') {
+        return {
+          status: 'error',
+          message: 'User unauthorized',
+          code: 401,
+        };
+      }
+
+      if (err.name === 'TokenExpiredError') {
+        return { status: 'error', message: 'Expired token', code: 401 };
+      }
 
       return { status: 'error', message: err, code: 500 };
     }

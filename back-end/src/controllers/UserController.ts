@@ -4,11 +4,13 @@ import {
   authenticateSchema,
   createSchema,
   forgotPasswordSchema,
+  resetPassordSchema,
 } from '../interfaces/user/user.dtos';
 import {
   IAuthenticate,
   ICreate,
   IForgotPassword,
+  IResetPassword,
 } from '../interfaces/user/user.interface';
 import UserModel from '../models/UserModel';
 import RequestManager from '../services/RequestManager';
@@ -96,6 +98,34 @@ class UserController {
 
     res.status(200);
     res.json(forgotPassowrdResp);
+  }
+
+  async resetPassword(req: Request, res: Response) {
+    const verifyResp = RequestManager.verify(req, resetPassordSchema);
+
+    if (verifyResp.status === 'error') {
+      res.status(400);
+      res.json({ status: 'error', message: verifyResp.message });
+
+      return;
+    }
+
+    const newPasswordInfo = verifyResp.message as IResetPassword;
+
+    const resetPasswordResp = await UserModel.resetPassword(newPasswordInfo);
+
+    if (resetPasswordResp.status === 'error') {
+      res.status(resetPasswordResp.code!);
+
+      delete resetPasswordResp.code;
+
+      res.json(resetPasswordResp);
+
+      return;
+    }
+
+    res.status(200);
+    res.json(resetPasswordResp);
   }
 }
 
