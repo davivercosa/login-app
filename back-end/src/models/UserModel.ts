@@ -3,8 +3,13 @@ import bcrypt from 'bcrypt';
 
 import { prisma } from '../database/prisma';
 import { IApiResponse } from '../interfaces/shared/responses';
-import { IAuthenticate, ICreate } from '../interfaces/user/user.interface';
+import {
+  IAuthenticate,
+  ICreate,
+  IForgotPassword,
+} from '../interfaces/user/user.interface';
 import Jwt from '../services/Jwt';
+import mail from '../services/mail';
 
 class UserModel {
   async create(newUserInfo: ICreate): Promise<IApiResponse> {
@@ -84,6 +89,51 @@ class UserModel {
       }
 
       return createTokenResp;
+    } catch (error) {
+      const err = error as Error;
+
+      console.log(err);
+
+      return { status: 'error', message: err, code: 500 };
+    }
+  }
+
+  async forgotPassword(userInfo: IForgotPassword): Promise<IApiResponse> {
+    try {
+      const findResp = await this.find(userInfo.email);
+
+      if (findResp.status === `error`) {
+        return findResp;
+      }
+
+      if (findResp.result === null) {
+        return {
+          status: 'error',
+          message: 'Invalid credentials',
+          code: 401,
+        };
+      }
+
+      const userDbInfo = findResp.result as User;
+
+      const updatedUserDbInfo = await prisma.user.update({
+        where: {
+          email: `${userDbInfo.email}`,
+        },
+        data: {
+          changePassword: 1,
+        },
+      });
+
+      const createTokenResp = Jwt.createToken(updatedUserDbInfo);
+
+      if (createTokenResp.status === 'error') {
+        return createTokenResp;
+      }
+
+      const token = createTokenResp.result as string;
+
+      return await mail(updatedUserDbInfo.email, token);
     } catch (error) {
       const err = error as Error;
 

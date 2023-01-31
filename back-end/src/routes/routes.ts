@@ -10,5 +10,6 @@ router.get('/', HomeController.index);
 // user
 router.post('/user', UserController.create);
 router.post('/signin', UserController.authenticate);
+router.post('/forgot-password', UserController.forgotPassword);
 
 export { router };

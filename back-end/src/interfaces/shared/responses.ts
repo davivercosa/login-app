@@ -1,7 +1,11 @@
 import { User } from '@prisma/client';
 import Joi from 'joi';
 
-import { IAuthenticate, ICreate } from '../user/user.interface';
+import {
+  IAuthenticate,
+  ICreate,
+  IForgotPassword,
+} from '../user/user.interface';
 // import { JwtPayload } from 'jsonwebtoken';
 
 type ResponseStatus = 'success' | 'error';
@@ -15,5 +19,5 @@ export interface IApiResponse {
 
 export interface IRequestManagerResponse {
   status: string;
-  message: Joi.ValidationError | ICreate | IAuthenticate;
+  message: Joi.ValidationError | ICreate | IAuthenticate | IForgotPassword;
 }

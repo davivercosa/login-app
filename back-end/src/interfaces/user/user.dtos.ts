@@ -26,4 +26,14 @@ const authenticateSchema = Joi.object({
   password: Joi.string().strip().required(),
 });
 
-export { createSchema, authenticateSchema };
+const forgotPasswordSchema = Joi.object({
+  email: Joi.string()
+    .strip()
+    .email({
+      minDomainSegments: 2,
+      tlds: { allow: ['com'] },
+    })
+    .required(),
+});
+
+export { createSchema, authenticateSchema, forgotPasswordSchema };
