@@ -1,0 +1,9 @@
+<div class="app">
+  <div class="content">
+    <app-loading *ngIf="globalService.loadingAnimationState()"></app-loading>
+
+    <p-toast position="top-right" key="custom-global-toast"></p-toast>
+
+    <router-outlet></router-outlet>
+  </div>
+</div>

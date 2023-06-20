@@ -1,0 +1,59 @@
+<div class="signup">
+  <div class="modal-body grid align-items-center justify-content-center">
+    <div class="img col flex align-items-center justify-content-center">
+      <p-image
+        src="../../../../../../assets/signup.jpg"
+        alt="Image"
+        width="250px"
+        height="250px"
+      ></p-image>
+    </div>
+    <div
+      class="col flex flex-column align-items-center"
+      [formGroup]="signupForm"
+    >
+      <div>
+        <h5>Username</h5>
+        <span class="p-input-icon-right">
+          <i class="pi pi-user"></i>
+          <input type="text" pInputText formControlName="name" autofocus />
+        </span>
+      </div>
+      <div>
+        <h5>E-mail</h5>
+        <span class="p-input-icon-right">
+          <i class="pi pi-envelope"></i>
+          <input type="text" pInputText formControlName="email" />
+        </span>
+      </div>
+      <div>
+        <h5>Password</h5>
+        <p-password [toggleMask]="true" formControlName="password">
+        </p-password>
+      </div>
+    </div>
+  </div>
+  <div
+    class="modal-footer flex justify-content-end gap-2"
+    style="padding-top: 1.5rem"
+  >
+    <button
+      icon="pi pi-check"
+      pButton
+      pRipple
+      type="button"
+      label="Register"
+      class="p-button-rounded p-button-help change-button-color"
+      (click)="handleRegisterClick()"
+    ></button>
+    <button
+      icon="pi pi-times"
+      pButton
+      pRipple
+      type="button"
+      label="Cancel"
+      (click)="handleCancelClick()"
+      class="p-button-rounded p-button-secondary"
+    ></button>
+  </div>
+</div>

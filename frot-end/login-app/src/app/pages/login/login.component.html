@@ -1,0 +1,119 @@
+<div class="login">
+  <div class="background">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  <div class="login-card-wrapper" style="position: absolute">
+    <div
+      class="login-card flex justify-content-center align-items-center"
+      style="height: 100vh; width: 100vw"
+    >
+      <div
+        class="card-form flex flex-column justify-content-center pl-8 pr-8 pt-4 pb-4"
+        style="background-color: rgba(255, 255, 255, 0.5)"
+      >
+        <div class="card-logo flex align-items-center justify-content-between">
+          <h1>Login</h1>
+          <img
+            src="../../../assets/startup1.png"
+            alt=""
+            width="70px"
+            height="70px"
+          />
+        </div>
+        <div
+          class="flex flex-column align-items-center p-4 gap-4"
+          [formGroup]="signinForm"
+        >
+          <div>
+            <h5>E-mail</h5>
+            <span class="p-input-icon-right">
+              <i class="pi pi-envelope"></i>
+              <input type="text" pInputText formControlName="email" autofocus />
+            </span>
+          </div>
+          <div>
+            <h5>Password</h5>
+            <p-password
+              [toggleMask]="true"
+              formControlName="password"
+            ></p-password>
+          </div>
+          <div class="flex flex-column gap-2 align-items-center">
+            <div style="cursor: pointer" (click)="showModalForgotPassword()">
+              <h5 style="color: rgb(56, 56, 56)">Forgot password?</h5>
+            </div>
+            <div class="flex gap-4">
+              <button
+                pButton
+                pRipple
+                type="button"
+                label="Sign in"
+                class="p-button-rounded p-button-help change-button-color"
+                style="min-width: 102px"
+                (click)="login()"
+              ></button>
+              <button
+                pButton
+                pRipple
+                type="button"
+                label="Sign up"
+                class="p-button-rounded p-button-help"
+                style="min-width: 102px"
+                (click)="showModalSignUp()"
+              ></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="singup-modal">
+  <p-dialog
+    header="Sign Up"
+    [(visible)]="displayModalSignUp"
+    [modal]="true"
+    [style]="{ width: '50vw' }"
+    [draggable]="false"
+    [resizable]="false"
+  >
+    <app-signup
+      (closeModalSignUp)="handleCloseModalSignup($event)"
+    ></app-signup>
+  </p-dialog>
+</div>
+
+<div class="forgotpassword-modal">
+  <p-dialog
+    header="Recover Password"
+    [(visible)]="displayModalForgotPassword"
+    [modal]="true"
+    [style]="{ width: '50vw' }"
+    [draggable]="false"
+    [resizable]="false"
+  >
+    <app-forgot-password
+      (closeModalForgotPassword)="handleCloseModalForgotPassword($event)"
+    ></app-forgot-password>
+  </p-dialog>
+</div>
